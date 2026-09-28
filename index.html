@@ -305,7 +305,7 @@ input[type=checkbox]{width:18px;height:18px;accent-color:var(--accent)}
 
 <div class="shell">
  <aside class="side">
-  <div class="brand"><b>Научный слог</b><span>5.2.3 · тренажёр речи</span></div>
+  <div class="brand"><b>Научный слог</b><span>5.2.3 · тренажёр речи · v4</span></div>
   <nav class="nav" id="nav"></nav>
   <div class="foot" id="sync"></div>
  </aside>
@@ -2688,7 +2688,9 @@ function transferHtml(){return`<h4>Перенос результатов меж�
 function wireTransfer(v){const cp=v.querySelector("#xcopy");cp.onclick=async()=>{const code=exportCode(v.querySelector("#xexpl").checked);try{await navigator.clipboard.writeText(code);cp.textContent="Код скопирован"}catch(e){const ta=v.querySelector("#xcode");ta.value=code;ta.select();cp.textContent="Код в поле ниже — скопируйте его"}};
  v.querySelector("#ximp").onclick=()=>{const ta=v.querySelector("#xcode"),out=v.querySelector("#xres");try{if(ta.value.trim().startsWith("NSLOG1:")&&ta.value.trim()===exportCode(v.querySelector("#xexpl").checked)){out.innerHTML=`<div class="fb no">Это код этой же версии — вставьте код из другой.</div>`;return}importCode(ta.value);out.innerHTML=`<div class="fb ok">Результаты объединены.</div>`;setTimeout(render,900)}catch(e){out.innerHTML=`<div class="fb no">Код не распознан. Скопируйте его целиком, он начинается с NSLOG1:</div>`}}}
 
-if(OFFLINE&&"serviceWorker" in navigator&&location.protocol.startsWith("http"))navigator.serviceWorker.register("sw.js").catch(()=>{});
+if(OFFLINE&&"serviceWorker" in navigator&&location.protocol.startsWith("http")){const had=!!navigator.serviceWorker.controller;let rl=false;
+ navigator.serviceWorker.addEventListener("controllerchange",()=>{if(had&&!rl&&!busy()){rl=true;location.reload()}});
+ navigator.serviceWorker.register("sw.js",{updateViaCache:"none"}).then(r=>{r.update();document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")r.update()})}).catch(()=>{})}
 readHash();render();
 
 </script>
